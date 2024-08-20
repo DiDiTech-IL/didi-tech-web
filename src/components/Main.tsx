@@ -3,7 +3,9 @@ import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Airplay, FileText, Hammer } from "lucide-react";
 import { forwardRef } from "react";
 
-const Main = forwardRef((props, ref) => {
+import { LegacyRef } from "react";
+
+const Main = forwardRef((props, ref: LegacyRef<HTMLElement>) => {
     return (
         <section ref={ref} className="w-full py-12 md:py-24 lg:py-32 bg-muted">
             <div className="container px-4 md:px-6">
