@@ -2,7 +2,7 @@
   "name": "didi-tech-web",
   "private": true,
   "version": "0.0.0",
-  "homepage": "https://diditech-il.github.io./",
+  "homepage": "https://diditech-il.github.io/didi-tech-web/",
   "type": "module",
   "scripts": {
     "dev": "vite",
