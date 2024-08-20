@@ -5,7 +5,7 @@ import { forwardRef } from "react";
 
 import { LegacyRef } from "react";
 
-const Main = forwardRef((props, ref: LegacyRef<HTMLElement>) => {
+const Main = forwardRef((_, ref: LegacyRef<HTMLElement>) => {
     return (
         <section ref={ref} className="w-full py-12 md:py-24 lg:py-32 bg-muted">
             <div className="container px-4 md:px-6">
