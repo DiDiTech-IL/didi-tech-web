@@ -2,10 +2,10 @@
 module.exports = {
   darkMode: ["class"],
   content: [
-    './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
   ],
   prefix: "",
   theme: {
@@ -18,9 +18,10 @@ module.exports = {
     },
     extend: {
       fontFamily: {
-        assistant: ['Assistant', 'sans-serif'],
-        heebo: ['Heebo', 'sans-serif'],
-        rubik: ['Rubik', 'sans-serif'],
+        assistant: ["Assistant", "sans-serif"],
+        heebo: ["Heebo", "sans-serif"],
+        rubik: ["Rubik", "sans-serif"],
+        code: ["CodePro", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -71,13 +72,34 @@ module.exports = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
-        
+        slidein: {
+          from: { opacity: 0, transform: "translateY(-20px)" },
+          to: { opacity: 1, transform: "translateY(0)" },
+        },
+        roll: {
+          "0%": { transform: "translateY(0)" },
+          "100%": { transform: "translateY(-5px)" },
+        },
+        spinIn: {
+          "0%": { transform: "rotate(-180deg)", opacity: "0" },
+          "100%": { transform: "rotate(0deg)", opacity: "1" },
+        },
+        slideIn: {
+          "0%": { transform: "translateX(-100%)", opacity: "0" },
+          "100%": { transform: "translateX(0)", opacity: "1" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        slidein300: "slidein 1s ease 300ms forwards",
+        slidein500: "slidein 1s ease 500ms forwards",
+        slidein700: "slidein 1s ease 700ms forwards",
+        roll: "roll 0.5s infinite linear",
+        spinIn: "spinIn 1s ease-out forwards",
+        slideIn: "slideIn 1s ease-out 0.6s forwards", // 1s delay to sync with the logo
       },
     },
   },
   plugins: [require("tailwindcss-animate")],
-}
+};

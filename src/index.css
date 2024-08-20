@@ -1,9 +1,42 @@
-@import url('https://fonts.googleapis.com/css2?family=Assistant:wght@200..800&family=Heebo:wght@100..900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Assistant:wght@200..800&family=Heebo:wght@100..900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap");
+
+@font-face {
+  font-family: "CodePro";
+  src: url('./assets/fonts/CodePro/Code-Pro-Light-LC.woff2') format('woff2'),
+       url('./assets/fonts/CodePro/Code-Pro-Light-LC.woff') format('woff');
+  font-weight: 300;
+  font-style: normal;
+}
+
+
+@font-face {
+  font-family: "CodePro";
+  src: url('./assets/fonts/CodePro/Code-Pro-LC.woff2') format('woff2'),
+       url('./assets/fonts/CodePro/Code-Pro-LC.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "CodePro";
+  src: url('./assets/fonts/CodePro/Code-Pro-Bold-LC.woff2') format('woff2'),
+       url('./assets/fonts/CodePro/Code-Pro-Bold-LC.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+}
+
+
+@font-face {
+  font-family: "CodePro";
+  src: url('./assets/fonts/CodePro/Code-Pro-Black-LC.woff2') format('woff2'),
+       url('./assets/fonts/CodePro/Code-Pro-Black-LC.woff') format('woff');
+  font-weight: 900;
+  font-style: normal;
+}
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
 
 @layer base {
   :root {
@@ -70,4 +103,3 @@
     @apply bg-background text-foreground;
   }
 }
-

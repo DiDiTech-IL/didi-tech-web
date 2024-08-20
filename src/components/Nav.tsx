@@ -1,27 +1,28 @@
-import { Menu, Search, User } from 'lucide-react';
+import { toast } from "sonner";
+import { Logo } from "./Logo";
 
 function Nav() {
-    return (
-        <nav className="flex items-center justify-between w-full py-4 text-white font-assistant text-xl" >
-            <div className="flex items-center cursor-pointer">
-                <h1 className="mb-4 text-xl font-extrabold text-gray-900 dark:text-white md:text-2xl lg:text-3xl bg-white p-2 rounded-lg">
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400 font-assistant">DiDi-Tech | דידי-טק</span></h1>
-
-            </div>
-
-            <div className="hidden md:flex gap-6 items-center" dir='rtl'>
-                <a href="#services" className="text-white hover:text-gray-200">שירותים</a>
-                <a href="#pricing" className="text-white hover:text-gray-200">מחירים</a>
-                <a href="#about" className="text-white hover:text-gray-200">אודות ויצירת קשר</a>
-            </div>
-
-            <div className="flex items-center space-x-4">
-                <Search className="w-6 h-6 text-white cursor-pointer hover:text-gray-200" />
-                <User className="w-8 h-8 p-1 text-white bg-emerald-700 rounded-full cursor-pointer hover:bg-emerald-600" />
-                <Menu className="w-6 h-6 text-white cursor-pointer md:hidden hover:text-gray-200" />
-            </div>
+  return (
+    <header className="fixed top-0 w-full h-18 bg-white dark:bg-gray-800 z-50 shadow-md font-sans px-4 lg:px-6">
+      <div className="flex items-center justify-between w-full h-full">
+        <Logo />
+        <nav className="flex gap-4 sm:gap-6">
+          <a href="#services" className="text-sm font-medium hover:underline underline-offset-4" onClick={()=>toast.info("really?")}>
+            Services
+          </a>
+          <a href="#team" className="text-sm font-medium hover:underline underline-offset-4"  onClick={()=>toast.info("I'm being serious?")}>
+            Team
+          </a>
+          <a href="#about" className="text-sm font-medium hover:underline underline-offset-4" onClick={()=>toast.info("This page is under construction! leave me alone!")}>
+            About
+          </a>
+          <a href="#contact" className="text-sm font-medium hover:underline underline-offset-4" onClick={()=>toast.info("I'll find you...")}>
+            Contact
+          </a>
         </nav>
-    );
+      </div>
+    </header>
+  );
 }
 
 export default Nav;
