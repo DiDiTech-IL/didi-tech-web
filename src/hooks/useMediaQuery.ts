@@ -1,25 +1,19 @@
-import { useCallback, useSyncExternalStore } from "react";
+import * as React from "react"
 
-export function useMediaQuery(query) {
-    const subscribe = useCallback(
-      (callback) => {
-        const matchMedia = window.matchMedia(query);
-  
-        matchMedia.addEventListener("change", callback);
-        return () => {
-          matchMedia.removeEventListener("change", callback);
-        };
-      },
-      [query]
-    );
-  
-    const getSnapshot = () => {
-      return window.matchMedia(query).matches;
-    };
-  
-    const getServerSnapshot = () => {
-      throw Error("useMediaQuery is a client-only hook");
-    };
-  
-    return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
-  }
+export function useMediaQuery(query: string) {
+  const [value, setValue] = React.useState(false)
+
+  React.useEffect(() => {
+    function onChange(event: MediaQueryListEvent) {
+      setValue(event.matches)
+    }
+
+    const result = matchMedia(query)
+    result.addEventListener("change", onChange)
+    setValue(result.matches)
+
+    return () => result.removeEventListener("change", onChange)
+  }, [query])
+
+  return value
+}

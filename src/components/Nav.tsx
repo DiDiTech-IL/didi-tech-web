@@ -8,12 +8,12 @@ import {
 } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
 import { cva } from "class-variance-authority";
-import { ArrowLeft, Heart, HeartPulse, Terminal } from "lucide-react";
+import { ArrowLeft, HeartPulse } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { Logo } from "./Logo";
+import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 import { Button } from "./ui/button";
 import { ListItem } from "./ui/list-item";
-import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 const training: { title: string; href: string; description: string, color: string }[] = [
   {
     title: "תוכנית הארגז",
