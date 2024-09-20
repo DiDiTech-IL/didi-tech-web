@@ -7,6 +7,7 @@ import './index.css'
 import Error from "./pages/Error.tsx"
 import Learning from "./pages/learning-page.tsx"
 import Services from "./pages/service-page.tsx"
+import Home from "./components/Home.tsx"
 
 const router = createBrowserRouter([
   {
@@ -14,6 +15,11 @@ const router = createBrowserRouter([
     element: <App />,
     errorElement: <Error />,
     children: [
+      {
+        index: true,
+        element: <Home />,
+        
+      },
       {
         path: "/learn",
         element: <Learning />,
