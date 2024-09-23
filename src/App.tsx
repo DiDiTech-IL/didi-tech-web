@@ -46,7 +46,7 @@ function App() {
           </CardContent>
           <CardFooter>
             <div className="place-items-end">
-              <CTAButton>צרו קשר כדי לגלות עוד</CTAButton>
+              <CTAButton>צרו קשר כדי ללמוד עוד</CTAButton>
             </div>
           </CardFooter>
         </Card>
