@@ -105,6 +105,10 @@ module.exports = {
           "0%": { transform: "translateX(100%)", opacity: "0" },
           "100%": { transform: "translateX(0)", opacity: "1" },
         },
+        shine: {
+          from: { backgroundPosition: "200% 0" },
+          to: { backgroundPosition: "-200% 0" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -118,6 +122,7 @@ module.exports = {
         spinIn: "spinIn 1s ease-out forwards",
         slideIn: "slideIn 1s ease-out 0.6s forwards",
         slideInRight: "slideInRight 1s ease-out 0.6s forwards",
+        shine: "shine 8s ease-in-out infinite",
       },
     },
   },
