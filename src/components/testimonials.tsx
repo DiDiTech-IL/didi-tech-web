@@ -1,7 +1,5 @@
-import React from 'react';
 import { motion } from 'framer-motion';
-import { Quote } from 'lucide-react';
-import { testimonials } from '@/lib/content';
+import React from 'react';
 
 export const Testimonials: React.FC = () => {
     return (
@@ -20,8 +18,8 @@ export const Testimonials: React.FC = () => {
                     </p>
                 </motion.div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    {testimonials.map((testimonial, index) => (
+                {/*   <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                   {testimonials.map((testimonial, index) => (
                         <motion.div
                             key={testimonial.name}
                             className="bg-white p-6 rounded-xl shadow-lg relative"
@@ -48,7 +46,21 @@ export const Testimonials: React.FC = () => {
                             </div>
                         </motion.div>
                     ))}
-                </div>
+                 
+                </div> */}
+                <motion.div
+
+                    className="p-6 w-full text-center relative"
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 1 }}
+                >
+
+                    <h2 className="text-4xl w-full font-bold mb-4 font-rubik text-teal-700 drop-shadow-lg">ריק פה... היו הראשונים!</h2>
+                    <p className="text-gray-600 font-assistant">גללו למטה וקבעו פגישה</p>
+
+                </motion.div>
             </div>
         </section>
     );

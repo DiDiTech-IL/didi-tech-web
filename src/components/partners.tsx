@@ -7,6 +7,14 @@ import smartoc from "@/assets/SmartOC (2).png"
 import haargaz from "@/assets/D (13).png"
 const partners = [
     {
+        name: 'Medicode',
+        logo: medicode,
+        //link: 'https://www.medicode.co.il'
+    },
+    {
+        name: 'הארגז',
+        logo: haargaz,
+    }, {
         name: 'שרייבר לב-טק',
         logo: 'https://levtech.jct.ac.il/assets/images/levtech_he_color_logo.png',
         link: 'https://levtech.jct.ac.il'
@@ -16,24 +24,16 @@ const partners = [
         logo: yanivArad,
         link: 'https://www.yaniv-arad.com'
     },
-    {
-        name: 'Medicode',
-        logo: medicode,
-        link: 'https://www.medicode.co.il'
-    },
-    {
-        name: 'הארגז',
-        logo: haargaz,
-    },
+
     {
         name: 'זה לניסיון',
         logo: lanisayon,
-        link: 'https://lanisayon.co.il'
+        // link: 'https://lanisayon.co.il'
     },
     {
         name: 'SmartOC',
         logo: smartoc,
-        link: 'https://smartoc.live'
+        //link: 'https://smartoc.live'
     }
 ];
 
@@ -50,7 +50,7 @@ export const Partners: React.FC = () => {
                 >
                     <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-teal-800 to-sky-500 font-heebo bg-clip-text text-transparent">חברים טובים באמצע הדרך</h2>
                     <p className="text-xl text-green-900 font-assistant mb-8">
-                        הקמת מערכות, הדרכות ושיתופי פעולה שונים
+                        יש פה פרויקטים שאני הרמתי, ויש פה גם אנשים שעבדתי יחד איתם
                     </p>
                 </motion.div>
 

@@ -28,7 +28,7 @@ export const Contact: React.FC = () => {
                         viewport={{ once: true }}
                         transition={{ duration: 0.5 }}
                     >
-                        <div className="flex items-start gap-4">
+                        <div className="flex flex-grow items-start gap-4">
                             <div className="bg-sky-100 w-16 h-16 rounded-2xl flex items-center justify-center mb-4">
                                 <Mail className="w-6 h-6 text-sky-600" />
                             </div>

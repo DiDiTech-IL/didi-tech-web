@@ -110,13 +110,13 @@ export const TimelineProjects: React.FC = () => {
                                     whileHover={{ y: -5 }}
                                     transition={{ duration: 0.2 }}
                                 >
-                                    <div className="h-48 overflow-hidden">
+                                    {/* <div className="h-48 overflow-hidden">
                                         <img
                                             src={project.image}
                                             alt={project.title}
                                             className="w-full h-full object-cover transform hover:scale-110 transition-transform duration-300"
                                         />
-                                    </div>
+                                    </div> */}
                                     <div className="p-6">
                                         <h3 className="text-xl font-bold font-rubik mb-2">{project.title}</h3>
                                         <p className="text-slate-600 font-assistant mb-4">{project.description}</p>

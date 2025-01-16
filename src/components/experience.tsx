@@ -1,6 +1,5 @@
 import { projects } from '@/lib/content';
 import { motion } from 'framer-motion';
-import { ExternalLink } from 'lucide-react';
 import React from 'react';
 
 const Projects: React.FC = () => {
@@ -33,7 +32,7 @@ const Projects: React.FC = () => {
                                     alt={project.title}
                                     className="w-full h-48 object-cover"
                                 />
-                                <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                {/* <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                     <a
                                         href={project.link}
                                         target='_blank'
@@ -42,7 +41,7 @@ const Projects: React.FC = () => {
                                         <span>לאתר הפרויקט</span>
                                         <ExternalLink className="w-4 h-4" />
                                     </a>
-                                </div>
+                                </div> */}
                             </div>
 
                             <div className="p-6">
