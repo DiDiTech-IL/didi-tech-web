@@ -1,8 +1,6 @@
 import { motion } from 'framer-motion';
 import { Mail } from 'lucide-react';
 import React from 'react';
-import { FaWhatsapp } from 'react-icons/fa';
-
 export const Contact: React.FC = () => {
     return (
         <section id="צורקשר" className="py-20 bg-white" dir="rtl">
