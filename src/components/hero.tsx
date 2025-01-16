@@ -35,38 +35,42 @@ function Hero() {
                             className="w-28 mx-auto"
                         />
                         <motion.h1
-                            className="text-5xl md:text-7xl flex items-center font-bold mb-6 bg-gradient-to-r from-teal-500 to-sky-800 font-heebo bg-clip-text text-transparent"
+                            className="text-5xl md:text-7xl flex lg:flex-row md:flex-col flex-col items-center font-bold mb-6 bg-gradient-to-r from-teal-500 to-sky-800 font-heebo bg-clip-text text-transparent"
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.5 }}
                         >
-                            הרעיון 
-                            <span className="px-4 font-light"> מורכב?</span>
-                            הפתרון
-                            <span className="w-fit justify-center overflow-hidden text-center">
-                                &nbsp;
+                            <span>
+                                הרעיון
+                                <span className="px-4 font-light"> מורכב?</span>
+                            </span>
+                            <span>
+                                הפתרון
+                                <span className="w-fit justify-center overflow-hidden text-center">
+                                    &nbsp;
 
-                                {titles.map((title, index) => (
-                                    <motion.span
-                                        key={index}
-                                        className="absolute font-light bg-gradient-to-r from-sky-800 to-sky-700 font-heebo bg-clip-text text-transparent"
-                                        initial={{ opacity: 0, y: "100" }}
-                                        transition={{ type: "spring", stiffness: 50 }}
-                                        animate={
-                                            titleNumber === index
-                                                ? {
-                                                    y: 0,
-                                                    opacity: 1,
-                                                }
-                                                : {
-                                                    y: titleNumber > index ? -150 : 150,
-                                                    opacity: 0,
-                                                }
-                                        }
-                                    >
-                                        {title}
-                                    </motion.span>
-                                ))}
+                                    {titles.map((title, index) => (
+                                        <motion.span
+                                            key={index}
+                                            className="absolute font-light bg-gradient-to-r from-sky-800 to-sky-700 font-heebo bg-clip-text text-transparent"
+                                            initial={{ opacity: 0, y: "100" }}
+                                            transition={{ type: "spring", stiffness: 50 }}
+                                            animate={
+                                                titleNumber === index
+                                                    ? {
+                                                        y: 0,
+                                                        opacity: 1,
+                                                    }
+                                                    : {
+                                                        y: titleNumber > index ? -150 : 150,
+                                                        opacity: 0,
+                                                    }
+                                            }
+                                        >
+                                            {title}
+                                        </motion.span>
+                                    ))}
+                                </span>
                             </span>
                         </motion.h1>
 
@@ -85,23 +89,23 @@ function Hero() {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.5, delay: 0.4 }}
                         >
-                        <motion.a
-                            href="#פרויקטים"
-                            className="bg-white text-teal-600 px-8 py-3 rounded-full font-rubik font-bold border-2 border-teal-600"
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                        >
-                            פרוייקטים לדוגמה
-                        </motion.a>
-                        <motion.a
-                            href="#צורקשר"
-                            className="bg-sky-800 text-white px-8 py-3 rounded-full font-rubik font-bold flex items-center justify-center gap-2 group"
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                        >
-                            <span>לפתרונות לעסקים וארגונים</span>
-                            <ArrowLeft className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                        </motion.a>
+                            <motion.a
+                                href="#פרויקטים"
+                                className="bg-white text-teal-600 px-8 py-3 rounded-full font-rubik font-bold border-2 border-teal-600"
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                            >
+                                פרוייקטים לדוגמה
+                            </motion.a>
+                            <motion.a
+                                href="#צורקשר"
+                                className="bg-sky-800 text-white px-8 py-3 rounded-full font-rubik font-bold flex items-center justify-center gap-2 group"
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                            >
+                                <span>לפתרונות לעסקים וארגונים</span>
+                                <ArrowLeft className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                            </motion.a>
 
                         </motion.div>
 
