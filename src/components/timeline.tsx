@@ -65,7 +65,7 @@ export const TimelineProjects: React.FC = () => {
                     viewport={{ once: true }}
                     transition={{ duration: 0.5 }}
                 >
-                    <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-teal-800 to-sky-500 font-heebo bg-clip-text text-transparent">ציר הזמן של דידי-טק</h2>
+                    <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-teal-800 to-sky-500 font-heebo bg-clip-text text-transparent">המסלול של דידי-טק</h2>
                     <p className="text-xl text-green-900 font-assistant mb-8">
                         איפה הכל התחיל, ומה התוכניות הלאה?
                     </p>

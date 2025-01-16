@@ -1,9 +1,9 @@
-import { BiLogoPostgresql } from "react-icons/bi";
-import { DiGit, DiNpm } from "react-icons/di";
+import { BiLogoPostgresql, BiSolidCreditCard } from "react-icons/bi";
+import { DiNpm } from "react-icons/di";
 import { FaAws, FaDocker, FaNodeJs, FaReact } from "react-icons/fa";
 import { IoLogoVercel } from "react-icons/io5";
-import { SiExpress, SiGooglecloud, SiMongodb, SiReactquery, SiReactrouter, SiShadcnui, SiTailwindcss, SiVite } from "react-icons/si";
-import { TbBrandCpp, TbBrandNextjs, TbBrandPrisma, TbBrandPython } from "react-icons/tb";
+import { SiExpress, SiGooglecloud, SiMongodb, SiReactquery, SiReactrouter, SiShadcnui, SiTailwindcss, SiTypescript, SiVite } from "react-icons/si";
+import { TbBrandCpp, TbBrandNextjs, TbBrandPrisma } from "react-icons/tb";
 import { OrbitingCircles } from './orbiting-circles';
 function Tech() {
 
@@ -21,7 +21,7 @@ function Tech() {
         { Icon: FaNodeJs, color: "text-green-600" },
         { Icon: SiExpress, color: "text-slate-300" },
         { Icon: TbBrandCpp, color: "text-blue-800" },
-        { Icon: TbBrandPython, color: "text-yellow-800" },
+        { Icon: SiTypescript, color: "text-blue-800" },
 
         // Databases
         { Icon: SiMongodb, color: "text-green-500" },
@@ -33,7 +33,7 @@ function Tech() {
         { Icon: FaAws, color: "text-orange-500" },
         { Icon: SiGooglecloud, color: "text-blue-400" },
         { Icon: FaDocker, color: "text-blue-600" },
-        { Icon: DiGit, color: "text-orange-600" },
+        { Icon: BiSolidCreditCard, color: "text-yellow-600" },
         { Icon: DiNpm, color: "text-red-600" },
 
     ];
@@ -44,7 +44,7 @@ function Tech() {
 
 
     return (
-        <div className="relative flex h-[500px] w-full flex-col items-center justify-center overflow-hidden bg-gradient-to-r from-slate-900 to-slate-800 py-16">
+        <div dir="rtl" className="relative flex h-[500px] w-full flex-col items-center justify-center overflow-hidden bg-gradient-to-r from-slate-900 to-slate-800 py-16">
             <h1 className="text-4xl font-bold text-center bg-gradient-to-r from-teal-400 to-sky-100 font-heebo bg-clip-text text-transparent mb-12 z-10 drop-shadow-[0_0px_8px_rgba(0,0,0,1)]">
                 באילו כלים בונים בדידי-טק?
             </h1>

@@ -13,9 +13,9 @@ export const Testimonials: React.FC = () => {
                     transition={{ duration: 0.5 }}
                 >
                     <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-teal-800 to-sky-500 font-heebo bg-clip-text text-transparent">לקוחות ממליצים</h2>
-                    <p className="text-xl text-green-900 font-assistant mb-8">
+                    {/* <p className="text-xl text-green-900 font-assistant mb-8">
                         ביקשנו יפה, זה מה שהם ענו. לא נגענו 😉
-                    </p>
+                    </p> */}
                 </motion.div>
 
                 {/*   <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
