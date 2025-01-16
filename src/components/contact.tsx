@@ -1,22 +1,55 @@
+import { motion } from 'framer-motion';
+import { Mail } from 'lucide-react';
+import React from 'react';
+import { FaWhatsapp } from 'react-icons/fa';
 
-function Contact() {
+export const Contact: React.FC = () => {
     return (
-        <div className="border-b border-slate-800 pb-24">
-            <h1 className="my-20 text-center text-4xl font-heebo">הגעתם עד לכאן? סיבה טובה לכתוב לי וליצור קשר!</h1>
-            <div className="text-center font-rubik">
-                <p className="my-4">
-                    בני ברק | ירושלים | גוש עציון
-                </p>
-                <p className="my-4" dir="ltr">
-                    (+972) 52-734-9091
-                </p>
-                <a href="mailto:yedidya@didi-tech.com" className="border-b">
-                    yedidya@didi-tech.com
-                </a>
+        <section id="צורקשר" className="py-20 bg-white" dir="rtl">
+            <div className="container mx-auto px-4">
+                <motion.div
+                    className="text-center mb-16"
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5 }}
+                >
+                    <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-teal-800 to-sky-500 font-heebo bg-clip-text text-transparent">בואו נדבר</h2>
+                    <p className="text-xl text-green-900 font-assistant mb-8">
+                        זה לא כזה מורכב, יש פה את כל מה שאתם צריכים בשביל לקבוע פגישה
+                    </p>
+                </motion.div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-6xl mx-auto">
+                    <motion.div
+                        className="space-y-8"
+                        initial={{ opacity: 0, x: -20 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.5 }}
+                    >
+                        <div className="flex items-start gap-4">
+                            <div className="bg-sky-100 w-16 h-16 rounded-2xl flex items-center justify-center mb-4">
+                                <Mail className="w-6 h-6 text-sky-600" />
+                            </div>
+                            <div>
+                                <h3 className="font-bold mb-2 font-rubik">לפניות דרך מייל</h3>
+                                <p className="text-gray-600 font-assistant">yedidya@didi-tech.com</p>
+                            </div>
+                        </div>
+
+                        <div className="flex items-start gap-4">
+                            <div className="bg-sky-100 w-16 h-16 rounded-2xl flex items-center justify-center mb-4">
+                                <FaWhatsapp className="w-6 h-6 text-teal-600" />
+                            </div>
+                            <div>
+                                <h3 className="font-bold mb-2 font-rubik">ניתן לפנות בטלפון ובווטסאפ</h3>
+                                <p className="text-gray-600 font-assistant">058-4242529</p>
+                            </div>
+                        </div>
+                    </motion.div>
+                </div>
             </div>
-
-        </div>
-    )
-}
-
-export default Contact
+        </section>
+    );
+};
