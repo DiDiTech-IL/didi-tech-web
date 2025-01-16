@@ -7,6 +7,8 @@ import { Partners } from "./components/partners";
 import Tech from "./components/tech";
 import { Testimonials } from "./components/testimonials";
 import { TimelineProjects } from "./components/timeline";
+import { Analytics } from '@vercel/analytics/react';
+
 function App() {
   return (
 
@@ -20,6 +22,7 @@ function App() {
       <TimelineProjects />
       <Testimonials />
       <Contact />
+      <Analytics />
     </div>
   )
 }
