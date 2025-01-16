@@ -23,7 +23,7 @@ export const projects: Project[] = [
     description:
       "תוכנה לבניית קורסים דיגיטליים ותפעול שיעורים פרטיים בין סטודנטים",
     image: superducationLogo,
-    link: "https://superducation.vercel.app",
+    link: "#",
   },
 ];
 
@@ -60,8 +60,7 @@ export const testimonials: Testimonial[] = [
     name: "מ. ט.",
     role: "Founder",
     company: "Medicode",
-    content:
-      "The emergency response system they built has revolutionized our operations. The attention to security and performance is exceptional.",
+    content: "בקרוב הם יכתבו",
     avatar:
       "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=150",
   },
@@ -69,8 +68,7 @@ export const testimonials: Testimonial[] = [
     name: "ש. ב.",
     role: "Commander",
     company: "910",
-    content:
-      "Their SOC platform has transformed how we manage security operations. The real-time capabilities and reliability are outstanding.",
+    content: "בקרוב יהיה כתוב",
     avatar:
       "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=150",
   },
@@ -78,10 +76,8 @@ export const testimonials: Testimonial[] = [
     name: "ר. ש.",
     role: "Teaching",
     company: "Superducation",
-    content:
-      "Their expertise in cloud architecture and performance optimization helped us achieve 99.99% uptime and significant cost savings.",
+    content: "הם עוד מחכים לגרסת הפצה הרשמית",
     avatar:
       "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=150",
   },
 ];
-

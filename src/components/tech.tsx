@@ -46,7 +46,7 @@ function Tech() {
     return (
         <div className="relative flex h-[500px] w-full flex-col items-center justify-center overflow-hidden bg-gradient-to-r from-slate-900 to-slate-800 py-16">
             <h1 className="text-4xl font-bold text-center bg-gradient-to-r from-teal-400 to-sky-100 font-heebo bg-clip-text text-transparent mb-12 z-10 drop-shadow-[0_0px_8px_rgba(0,0,0,1)]">
-                בין הטכנולוגיות שמשתמשים בהן פה בדידי-טק
+                באילו כלים בונים בדידי-טק?
             </h1>
 
             {/* Orbiting Circles */}
