@@ -32,7 +32,7 @@ export const Contact: React.FC = () => {
                             </div>
                             <div>
                                 <h3 className="font-bold mb-2 font-rubik">לפניות דרך המייל (נכון לעכשיו אני אענה רק שם)</h3>
-                                <p className="text-gray-600 font-assistant">yedidya@didi-tech.com</p>
+                                <a href="mailto:yedidya@didi-tech.com" className="text-gray-600 font-assistant">yedidya@didi-tech.com</a>
                             </div>
                         </div>
 
