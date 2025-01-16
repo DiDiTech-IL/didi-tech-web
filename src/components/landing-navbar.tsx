@@ -11,14 +11,15 @@ function Navbar() {
         >
             <div className="container mx-auto px-4 py-4" dir="rtl">
                 <nav className="flex items-center justify-between">
-                    <motion.div
+                    <motion.a
                         className="flex items-center space-x-2"
                         whileHover={{ scale: 1.05 }}
+                        href='/'
                     >
                         <div className="flex flex-shrink-0 items-center">
                             <img src={LogoUrl} alt="Didi Tech Logo" className="mx-2 w-10" />
                         </div>
-                    </motion.div>
+                    </motion.a>
                     <div className="hidden md:flex gap-8 font-heebo" dir="rtl">
                         {['שירותים', 'פרויקטים', 'שותפים', 'עדכונים', 'המלצות'].map((item) => (
                             <motion.a
