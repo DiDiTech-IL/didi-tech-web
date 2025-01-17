@@ -25,7 +25,7 @@ const projects: TimelineProject[] = [
         tags: ['Healthcare', 'Real-time']
     },
     {
-        title: 'Superducation נולדת',
+        title: 'Superducation',
         date: '2023-04',
         description: 'נועדה לאפשר לסטודנטים לרכוש ולשתף ידע באמצעות שיעורים מקוונים במחירים הוגנים ושווים לכל נפש',
         image: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&q=80&w=1280',
@@ -88,10 +88,10 @@ export const TimelineProjects: React.FC = () => {
                             {/* Timeline Dot */}
                             <div className="absolute left-4 md:left-1/2 transform md:-translate-x-1/2 flex flex-col items-center z-10">
                                 <div className="w-4 h-4 rounded-full bg-sky-600 border-4 border-white" />
-                                <div className="mt-2 px-4 py-1 bg-teal-600 rounded-full">
+                                <div className="mt-2 px-4 md:mt-1 md:px-2 py-1 bg-teal-600 rounded-full">
                                     <span className="text-sm text-white font-medium whitespace-nowrap">
                                         {new Date(project.date).toLocaleDateString('he-IL', {
-                                            year: 'numeric',
+                                            year: '2-digit',
                                             month: 'short',
                                         })}
                                     </span>
@@ -118,7 +118,7 @@ export const TimelineProjects: React.FC = () => {
                                         />
                                     </div> */}
                                     <div className="p-6">
-                                        <h3 className="text-xl font-bold font-rubik mb-2">{project.title}</h3>
+                                        <h3 className="text-xl sm:text-base  font-bold font-rubik mb-2">{project.title}</h3>
                                         <p className="text-slate-600 font-assistant mb-4">{project.description}</p>
                                     </div>
                                 </motion.div>

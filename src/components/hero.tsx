@@ -3,6 +3,7 @@ import { ArrowLeft } from "lucide-react"
 import { FaGithub, FaLinkedin } from "react-icons/fa"
 import DidiTechImage from "../assets/didi_tech_logo.png"
 import { useEffect, useMemo, useState } from "react";
+import { Typewriter } from "./typewriter";
 function Hero() {
     const [titleNumber, setTitleNumber] = useState(0);
     const titles = useMemo(
@@ -26,7 +27,7 @@ function Hero() {
         <div className="border-b border-neutral-900 pb-4 lg:mb-35" dir="rtl">
             <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-teal-50 to-sky-50 pt-16">
                 <div className="container mx-auto px-4">
-                    <div className="max-w-4xl mx-auto text-center">
+                    <div className="max-w-5xl mx-auto text-center">
                         <motion.img
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
@@ -35,42 +36,25 @@ function Hero() {
                             className="w-28 mx-auto"
                         />
                         <motion.h1
-                            className="text-5xl md:text-7xl flex lg:flex-row md:flex-col flex-col items-center font-bold mb-6 bg-gradient-to-r from-teal-500 to-sky-800 font-heebo bg-clip-text text-transparent"
+                            className="text-4xl md:text-7xl sm:text-5xl min-w-full flex flex-col lg:flex-row md:flex-col sm:flex-col justify-center items-center font-bold mb-6 bg-gradient-to-r from-teal-500 to-sky-800 font-heebo bg-clip-text text-transparent"
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.5 }}
                         >
                             <span>
                                 הרעיון
-                                <span className="px-4 font-light"> מורכב?</span>
+                                <span className="font-light">&nbsp;מורכב?&nbsp;</span>
                             </span>
                             <span>
-                                הפתרון
-                                <span className="w-fit justify-center overflow-hidden text-center">
-                                    &nbsp;
-
-                                    {titles.map((title, index) => (
-                                        <motion.span
-                                            key={index}
-                                            className="absolute font-light bg-gradient-to-r from-sky-800 to-sky-700 font-heebo bg-clip-text text-transparent"
-                                            initial={{ opacity: 0, y: "100" }}
-                                            transition={{ type: "spring", stiffness: 50 }}
-                                            animate={
-                                                titleNumber === index
-                                                    ? {
-                                                        y: 0,
-                                                        opacity: 1,
-                                                    }
-                                                    : {
-                                                        y: titleNumber > index ? -150 : 150,
-                                                        opacity: 0,
-                                                    }
-                                            }
-                                        >
-                                            {title}
-                                        </motion.span>
-                                    ))}
-                                </span>
+                                הפתרון&nbsp;
+                                <Typewriter
+                                    text={titles}
+                                    speed={70}
+                                    className="font-light bg-gradient-to-r from-sky-800 to-sky-700 font-heebo bg-clip-text text-transparent"
+                                    waitTime={2000}
+                                    deleteSpeed={70}
+                                    cursorChar={"|"}
+                                />
                             </span>
                         </motion.h1>
 
@@ -134,7 +118,7 @@ function Hero() {
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
     )
 }
 
