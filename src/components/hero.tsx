@@ -1,6 +1,6 @@
 import { motion } from "framer-motion"
 import { ArrowLeft } from "lucide-react"
-import { FaGithub, FaLinkedin } from "react-icons/fa"
+import { FaGithub, FaLinkedin, FaYoutube } from "react-icons/fa"
 import DidiTechImage from "../assets/didi_tech_logo.png"
 import { useEffect, useMemo, useState } from "react";
 import { Typewriter } from "./typewriter";
@@ -101,17 +101,24 @@ function Hero() {
                         >
                             <motion.a
                                 href="https://github.com/didinewlander"
-                                className="text-gray-600 hover:text-slate-600 transition-colors"
+                                className="text-slate-600 hover:text-slate-600 transition-colors"
                                 whileHover={{ y: -2 }}
                             >
                                 <FaGithub size={24} />
                             </motion.a>
                             <motion.a
                                 href="https://www.linkedin.com/in/yedidyanewlander/"
-                                className="text-gray-600 hover:text-blue-800 transition-colors"
+                                className="text-slate-600 hover:text-blue-800 transition-colors"
                                 whileHover={{ y: -2 }}
                             >
                                 <FaLinkedin size={24} />
+                            </motion.a>
+                            <motion.a
+                                href="https://www.youtube.com/@%D7%93%D7%99%D7%93%D7%99-%D7%98%D7%A7"
+                                className="text-slate-600 hover:text-red-800 transition-colors"
+                                whileHover={{ y: -2 }}
+                            >
+                                <FaYoutube size={24} />
                             </motion.a>
 
                         </motion.div>
