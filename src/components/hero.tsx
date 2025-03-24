@@ -1,8 +1,8 @@
-import { motion } from "framer-motion"
-import { ArrowLeft } from "lucide-react"
-import { FaGithub, FaLinkedin, FaYoutube } from "react-icons/fa"
-import DidiTechImage from "../assets/didi_tech_logo.png"
+import { motion } from "framer-motion";
+import { ArrowLeft } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { FaGithub, FaLinkedin } from "react-icons/fa";
+import DidiTechImage from "../assets/didi_tech_logo.png";
 import { Typewriter } from "./typewriter";
 function Hero() {
     const [titleNumber, setTitleNumber] = useState(0);
@@ -113,13 +113,13 @@ function Hero() {
                             >
                                 <FaLinkedin size={24} />
                             </motion.a>
-                            <motion.a
+                            {/* <motion.a
                                 href="https://www.youtube.com/@%D7%93%D7%99%D7%93%D7%99-%D7%98%D7%A7"
                                 className="text-slate-600 hover:text-red-800 transition-colors"
                                 whileHover={{ y: -2 }}
                             >
                                 <FaYoutube size={24} />
-                            </motion.a>
+                            </motion.a> */}
 
                         </motion.div>
                     </div>
