@@ -1,0 +1,612 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("TACHLES_OFFICE_PRISMA_DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  clerkId   String   @unique
+  email     String   @unique
+  firstName String?
+  lastName  String?
+  role      UserRole @default(EMPLOYEE)
+  hourlyRate Decimal? @db.Decimal(8, 2)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  ownedProducts    Product[]
+  assignedTickets  Ticket[]
+  timeEntries      TimeEntry[]
+  @@map("users")
+}
+
+model Client {
+  id          String   @id @default(cuid())
+  name        String
+  email       String   @unique
+  phone       String?
+  company     String?
+  address     String?
+  city        String?
+  country     String?
+  postalCode  String?
+  taxId       String?   // For invoice generation
+  status      ClientStatus @default(ACTIVE)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  subscriptions ProductSubscription[]
+  tickets       Ticket[]
+  payments      Payment[]
+  invoices      Invoice[]
+  @@map("clients")
+}
+
+model Product {
+  id          String        @id @default(cuid())
+  name        String
+  nameEn      String?       // English name for payment URLs
+  description String
+  domain      String?       // Product domain (e.g., myapp.com)
+  repository  String?       // Git repository URL
+  status      ProductStatus @default(DEVELOPMENT)
+  version     String?       // Current version
+  pricing     Json?         // Pricing plans as JSON
+  features    String[]      // Product features list
+  category    String?       // Product category
+  
+  // API Management
+  apiBaseUrl  String?       // Base API URL for the product
+  apiKey      String?       // Shared API key for secure operations
+  apiEndpoints Json?        // JSON array of API endpoints for management
+  
+  // Webhook Integration
+  webhookKey    String?     @unique // Unique key for webhook integration
+  webhookSecret String?     // Secret for webhook signature verification
+  webhookUrl    String?     // Target app's webhook endpoint
+  
+  // Database Management
+  dbConnectionString String? // Encrypted DB connection
+  dbType      String?       // postgres, mysql, mongodb, etc.
+  dbApiKey    String?       // Separate key for DB operations
+  
+  // Financial
+  monthlyRevenue Decimal    @default(0) @db.Decimal(10, 2)
+  totalRevenue   Decimal    @default(0) @db.Decimal(10, 2)
+  
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  launchedAt  DateTime?     // When product went live
+
+  // Product owner/maintainer
+  ownerId     String?
+  owner       User?   @relation(fields: [ownerId], references: [id])
+
+  // Subscriptions and relationships
+  paymentPlans  PaymentPlan[]
+  subscriptions ProductSubscription[]
+  tickets       Ticket[]
+  payments      Payment[]
+  invoices      Invoice[]
+  webhooks      WebhookEndpoint[]
+  webhookLogs   WebhookLog[]
+  timeEntries   TimeEntry[]
+  
+  // Coupon redemptions
+  couponRedemptions CouponRedemption[]
+  
+  @@map("products")
+}
+
+model ProductSubscription {
+  id          String              @id @default(cuid())
+  productId   String
+  product     Product             @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  clientId    String
+  client      Client              @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  
+  // Payment plan relationship
+  paymentPlanId String?
+  paymentPlan   PaymentPlan?      @relation(fields: [paymentPlanId], references: [id])
+  
+  plan        String              // e.g., "basic", "premium", "enterprise"
+  status      SubscriptionStatus  @default(ACTIVE)
+  billingCycle String             @default("monthly") // monthly, yearly, one-time
+  amount      Decimal             @db.Decimal(10, 2)
+  currency    String              @default("USD")
+  
+  startDate   DateTime            @default(now())
+  endDate     DateTime?           // For fixed-term subscriptions
+  nextBilling DateTime?           // Next billing date
+  
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+  
+  // Track usage/limits if applicable
+  usageData   Json?               // Usage metrics as JSON
+  
+  @@unique([productId, clientId]) // One subscription per client per product
+  @@map("product_subscriptions")
+}
+
+model WebhookEndpoint {
+  id          String    @id @default(cuid())
+  url         String
+  events      String[]  // Array of event types to listen for
+  secret      String?   // Webhook secret for validation
+  isActive    Boolean   @default(true)
+  description String?
+  
+  // Link to specific product
+  productId   String?
+  product     Product?  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  // Webhook stats
+  successCount Int      @default(0)
+  failureCount Int      @default(0)
+  lastTriggered DateTime?
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  // Webhook logs
+  logs        WebhookLog[]
+  
+  @@map("webhook_endpoints")
+}
+
+model Ticket {
+  id          String       @id @default(cuid())
+  title       String
+  description String
+  status      TicketStatus @default(OPEN)
+  priority    Priority     @default(MEDIUM)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  clientId    String
+  client      Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  
+  productId   String?
+  product     Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+  
+  assignedToId String?
+  assignedTo   User?   @relation(fields: [assignedToId], references: [id])
+
+  @@map("tickets")
+}
+
+model Payment {
+  id            String        @id @default(cuid())
+  amount        Decimal       @db.Decimal(10, 2)
+  currency      String        @default("USD")
+  status        PaymentStatus @default(PENDING)
+  description   String?
+  paymentMethod String?
+  transactionId String?       @unique
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  clientId      String
+  client        Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  productId     String?
+  product       Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+
+  // Payment plan relationship
+  paymentPlanId String?
+  paymentPlan   PaymentPlan? @relation(fields: [paymentPlanId], references: [id])
+
+  invoiceId     String?
+  invoice       Invoice? @relation(fields: [invoiceId], references: [id], onDelete: SetNull)
+
+  // Coupon redemptions
+  couponRedemptions CouponRedemption[]
+
+  @@map("payments")
+}
+
+model WebhookLog {
+  id        String   @id @default(cuid())
+  endpoint  String
+  method    String
+  headers   Json
+  body      Json
+  response  Json?
+  status    String?  // Changed from Int to String for integration statuses
+  success   Boolean  @default(false)
+  
+  // Integration fields
+  payload     String?    // Raw webhook payload for integrations
+  originUrl   String?    // Source URL for the webhook
+  destinationUrl String? // Target URL for processing
+  
+  createdAt DateTime @default(now())
+  
+  // Link to webhook endpoint (for standard webhooks)
+  webhookEndpointId String?
+  webhookEndpoint   WebhookEndpoint? @relation(fields: [webhookEndpointId], references: [id], onDelete: SetNull)
+  
+  // Link to product (for integration webhooks)
+  productId String?
+  product   Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+
+  @@map("webhook_logs")
+}
+
+model Invoice {
+  id            String        @id @default(cuid())
+  invoiceNumber String        @unique
+  title         String
+  description   String?
+  subtotal      Decimal       @db.Decimal(10, 2)
+  taxRate       Decimal       @default(0) @db.Decimal(5, 2)
+  taxAmount     Decimal       @default(0) @db.Decimal(10, 2)
+  total         Decimal       @db.Decimal(10, 2)
+  currency      String        @default("USD")
+  status        InvoiceStatus @default(DRAFT)
+  dueDate       DateTime
+  paidDate      DateTime?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  clientId      String
+  client        Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  productId     String?
+  product       Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+
+  items         InvoiceItem[]
+  payments      Payment[]
+  timeEntries   TimeEntry[]
+  @@map("invoices")
+}
+
+model InvoiceItem {
+  id          String  @id @default(cuid())
+  description String
+  quantity    Decimal @db.Decimal(8, 2)
+  rate        Decimal @db.Decimal(8, 2)
+  amount      Decimal @db.Decimal(10, 2)
+
+  invoiceId   String
+  invoice     Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  @@map("invoice_items")
+}
+
+model TimeEntry {
+  id          String    @id @default(cuid())
+  description String
+  hours       Decimal   @db.Decimal(8, 2)
+  rate        Decimal?  @db.Decimal(8, 2)
+  date        DateTime
+  billable    Boolean   @default(true)
+  invoiced    Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  productId   String?
+  product     Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+
+  userId      String
+  user        User @relation(fields: [userId], references: [id])
+
+  invoiceId   String?
+  invoice     Invoice? @relation(fields: [invoiceId], references: [id])
+
+  @@map("time_entries")
+}
+
+enum UserRole {
+  ADMIN
+  MANAGER
+  EMPLOYEE
+}
+
+enum ClientStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+enum ProductStatus {
+  DEVELOPMENT
+  BETA
+  LIVE
+  MAINTENANCE
+  DEPRECATED
+  RETIRED
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  PAUSED
+  CANCELLED
+  EXPIRED
+  TRIAL
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+enum InvoiceStatus {
+  DRAFT
+  SENT
+  VIEWED
+  PAID
+  OVERDUE
+  CANCELLED
+}
+
+enum PlanType {
+  ONE_TIME
+  RECURRING
+  FREEMIUM
+  TRIAL
+}
+
+enum BillingInterval {
+  MONTHLY
+  YEARLY
+  QUARTERLY
+  WEEKLY
+  ONE_TIME
+}
+
+enum Currency {
+  USD
+  EUR
+  GBP
+  ILS
+  CAD
+  AUD
+}
+
+enum DiscountType {
+  PERCENTAGE    // e.g., 20% off
+  FIXED_AMOUNT  // e.g., $10 off
+  FREE_TRIAL    // Extended trial period
+  FREE_MONTHS   // Free months of service
+}
+
+enum CouponUsageType {
+  PUBLIC        // Anyone can use
+  TIME_LIMITED  // Available for limited time
+  USER_SPECIFIC // Specific users only
+  PRODUCT_SPECIFIC // Specific products only
+  GLOBAL        // All products
+  FIRST_TIME    // New customers only
+}
+
+enum OrganizationStatus {
+  ACTIVE
+  SUSPENDED
+  INACTIVE
+  PENDING
+}
+
+model PaymentPlan {
+  id            String          @id @default(cuid())
+  name          String          // e.g., "Basic Plan", "Pro Plan", "Enterprise"
+  description   String?         // Plan description
+  planType      PlanType        @default(RECURRING)
+  
+  // Pricing
+  price         Decimal         @db.Decimal(10, 2)
+  currency      Currency        @default(USD)
+  billingInterval BillingInterval @default(MONTHLY)
+  
+  // Trial settings
+  trialDays     Int?            // Number of trial days (if applicable)
+  
+  // Features and limits
+  features      String[]        // List of features included
+  userLimit     Int?            // Maximum number of users (null = unlimited)
+  storageLimit  Int?            // Storage limit in GB (null = unlimited)
+  apiCallsLimit Int?            // API calls per month (null = unlimited)
+  
+  // Promotional pricing
+  discountPercentage Decimal?   @db.Decimal(5, 2) // Discount percentage if any
+  discountValidUntil DateTime?  // When discount expires
+  
+  // Visibility and status
+  isActive      Boolean         @default(true)
+  isPopular     Boolean         @default(false) // Highlight as popular choice
+  displayOrder  Int             @default(0)     // Order for display
+  
+  // Product relationship
+  productId     String
+  product       Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  // Subscriptions using this plan
+  subscriptions ProductSubscription[]
+  payments      Payment[]
+  
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  
+  @@map("payment_plans")
+}
+
+model Coupon {
+  id                String        @id @default(cuid())
+  code              String        @unique // Coupon code (e.g., "SAVE20", "WELCOME2024")
+  name              String        // Display name for admin
+  description       String?       // Internal description
+  
+  // Discount configuration
+  discountType      DiscountType  @default(PERCENTAGE)
+  discountValue     Decimal       @db.Decimal(10, 2) // Amount or percentage
+  maxDiscountAmount Decimal?      @db.Decimal(10, 2) // Max discount for percentage coupons
+  
+  // Usage restrictions
+  usageType         CouponUsageType @default(PUBLIC)
+  maxUses           Int?          // Total usage limit (null = unlimited)
+  maxUsesPerUser    Int?          // Per-user usage limit (null = unlimited)
+  currentUses       Int           @default(0)
+  
+  // Validity period
+  validFrom         DateTime      @default(now())
+  validUntil        DateTime?     // Expiration date (null = no expiration)
+  
+  // Scope restrictions
+  isGlobal          Boolean       @default(false) // Can be used across all products
+  productIds        String[]      // Specific products this coupon applies to
+  planIds           String[]      // Specific plans this coupon applies to
+  
+  // User restrictions (for targeted coupons)
+  allowedEmails     String[]      // Specific emails that can use this coupon
+  allowedDomains    String[]      // Email domains that can use this coupon
+  
+  // Minimum requirements
+  minimumAmount     Decimal?      @db.Decimal(10, 2) // Minimum order amount
+  firstTimeOnly     Boolean       @default(false)   // Only for new customers
+  
+  // Status
+  isActive          Boolean       @default(true)
+  
+  // Analytics
+  totalRedemptions  Int           @default(0)
+  totalDiscountGiven Decimal      @default(0) @db.Decimal(10, 2)
+  
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  
+  // Relationships
+  redemptions       CouponRedemption[]
+  
+  @@map("coupons")
+}
+
+model CouponRedemption {
+  id                String    @id @default(cuid())
+  
+  // Coupon and user info
+  couponId          String
+  coupon            Coupon    @relation(fields: [couponId], references: [id], onDelete: Cascade)
+  
+  userEmail         String    // Email of user who redeemed
+  
+  // Order/payment info
+  paymentId         String?
+  payment           Payment?  @relation(fields: [paymentId], references: [id])
+  
+  productId         String?
+  product           Product?  @relation(fields: [productId], references: [id])
+  
+  planId            String?
+  
+  // Discount applied
+  originalAmount    Decimal   @db.Decimal(10, 2)
+  discountAmount    Decimal   @db.Decimal(10, 2)
+  finalAmount       Decimal   @db.Decimal(10, 2)
+  
+  createdAt         DateTime  @default(now())
+  
+  @@map("coupon_redemptions")
+}
+
+model Settings {
+  id            String  @id @default("main") // Single settings record
+  
+  // Maintenance settings
+  maintenanceEnabled      Boolean @default(false)
+  maintenanceMessage      String  @default("System is under maintenance. Please check back later.")
+  maintenanceScheduledStart DateTime?
+  maintenanceScheduledEnd   DateTime?
+  
+  // Payment settings
+  paymentProvider    String  @default("payplus")
+  paymentTestMode    Boolean @default(true)
+  paymentCurrency    String  @default("ILS")
+  paymentTaxRate     Decimal @default(0) @db.Decimal(5, 2)
+  
+  // Email settings
+  emailProvider      String  @default("none")
+  emailFromName      String  @default("DiDi Tech")
+  emailFromEmail     String  @default("noreply@diditech.co.il")
+  
+  // Security settings
+  securitySessionTimeout   Int     @default(30)
+  securityMaxLoginAttempts Int     @default(5)
+  securityRequireTwoFactor Boolean @default(false)
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@map("settings")
+}
+
+// Lead submission model for tracking customer requests
+model LeadSubmission {
+  id                  String      @id @default(cuid())
+  preferredSubdomain  String?     @unique
+  organizationName    String?
+  contactEmail        String
+  contactName         String?
+  contactPhone        String?
+  status              String      @default("PENDING") // PENDING, PROCESSING, COMPLETED_LEAD, FAILED
+  tachlesLeadId       String?     @unique
+  tachlesCustomerId   String?
+  
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
+  
+  @@map("lead_submissions")
+}
+
+// Organization model for multi-tenant setup
+model Organization {
+  id              String            @id @default(cuid())
+  slug            String            @unique // subdomain
+  clerkOrgId      String?           @unique
+  name            String
+  description     String?
+  status          OrganizationStatus @default(ACTIVE)
+  allowStudentSignup Boolean        @default(true)
+  requireApproval    Boolean        @default(true)
+  
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  
+  regions         Region[]
+  
+  @@map("organizations")
+}
+
+// Region model for organization structure
+model Region {
+  id             String       @id @default(cuid())
+  name           String
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  
+  @@map("regions")
+}
