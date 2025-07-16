@@ -27,45 +27,11 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     const transform = url.searchParams.get('transform');
 
     if (transform === 'pdf') {
-      // Transform the data to match the PDF generator interface
-      const transformedInvoice = {
-        id: invoice.id,
-        invoiceNumber: invoice.invoiceNumber,
-        title: invoice.title,
-        description: invoice.description || undefined,
-        createdAt: invoice.createdAt,
-        issueDate: invoice.createdAt, // Use createdAt as issueDate
-        dueDate: invoice.dueDate,
-        status: invoice.status,
-        subtotal: Number(invoice.subtotal),
-        taxRate: invoice.taxRate ? Number(invoice.taxRate) : undefined,
-        taxAmount: invoice.taxAmount ? Number(invoice.taxAmount) : undefined,
-        total: Number(invoice.total),
-        currency: invoice.currency || 'USD',
-        client: {
-          id: invoice.client.id,
-          name: invoice.client.name,
-          email: invoice.client.email,
-          company: invoice.client.company || undefined,
-          address: invoice.client.address || undefined,
-          city: invoice.client.city || undefined,
-          country: invoice.client.country || undefined,
-          postalCode: invoice.client.postalCode || undefined,
-        },
-        product: invoice.product ? {
-          id: invoice.product.id,
-          name: invoice.product.name,
-          description: invoice.product.description || undefined,
-        } : undefined,
-        items: invoice.items.map(item => ({
-          id: item.id,
-          description: item.description,
-          quantity: Number(item.quantity),
-          rate: Number(item.rate),
-          amount: Number(item.amount),
-        })),
-      };
-      return NextResponse.json(transformedInvoice);
+      // PDF service is disabled
+      return NextResponse.json(
+        { error: "PDF service is not available. PDF generation is currently disabled." },
+        { status: 503 }
+      );
     }
 
     return NextResponse.json(invoice);

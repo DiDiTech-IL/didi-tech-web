@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -10,8 +11,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import type { PaymentPlan } from '@/types/payment-plan';
 import { Plus, Trash2 } from "lucide-react";
-import { createPaymentPlan, updatePaymentPlan } from '@/app/dashboard/products/actions';
-import { useRef, useEffect, useState } from 'react';
 
 interface PaymentPlanDialogProps {
   productId: string;
@@ -19,7 +18,25 @@ interface PaymentPlanDialogProps {
   isOpen: boolean;
   onClose: () => void;
   onSaved: () => void;
-  onOptimisticUpdate?: (plan: PaymentPlan) => void;
+}
+
+interface PlanFormData {
+  name: string;
+  description: string;
+  planType: PaymentPlan['planType'];
+  price: number;
+  currency: PaymentPlan['currency'];
+  billingInterval: PaymentPlan['billingInterval'];
+  trialDays?: number;
+  features: string[];
+  userLimit?: number;
+  storageLimit?: number;
+  apiCallsLimit?: number;
+  discountPercentage?: number;
+  discountValidUntil?: string;
+  isPopular: boolean;
+  isActive: boolean;
+  displayOrder: number;
 }
 
 export default function PaymentPlanDialog({ 
@@ -27,117 +44,124 @@ export default function PaymentPlanDialog({
   plan, 
   isOpen, 
   onClose, 
-  onSaved,
-  onOptimisticUpdate 
+  onSaved 
 }: PaymentPlanDialogProps) {
   const { toast } = useToast();
-  const formRef = useRef<HTMLFormElement>(null);
-  const [features, setFeatures] = useState<string[]>(['']);
-  const [isPending, setIsPending] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [formData, setFormData] = useState<PlanFormData>({
+    name: '',
+    description: '',
+    planType: 'RECURRING',
+    price: 0,
+    currency: 'ILS',
+    billingInterval: 'MONTHLY',
+    features: [],
+    isPopular: false,
+    isActive: true,
+    displayOrder: 1,
+  });
 
-  // Handle form submission with server actions
-  const handleSubmit = async (formData: FormData) => {
-    setIsPending(true);
-    
+  useEffect(() => {
+    if (plan) {
+      setFormData({
+        name: plan.name,
+        description: plan.description || '',
+        planType: plan.planType,
+        price: plan.price,
+        currency: plan.currency,
+        billingInterval: plan.billingInterval,
+        trialDays: plan.trialDays,
+        features: plan.features,
+        userLimit: plan.userLimit,
+        storageLimit: plan.storageLimit,
+        apiCallsLimit: plan.apiCallsLimit,
+        discountPercentage: plan.discountPercentage,
+        discountValidUntil: plan.discountValidUntil,
+        isPopular: plan.isPopular || false,
+        isActive: plan.isActive,
+        displayOrder: plan.displayOrder,
+      });
+    } else {
+      setFormData({
+        name: '',
+        description: '',
+        planType: 'RECURRING',
+        price: 0,
+        currency: 'ILS',
+        billingInterval: 'MONTHLY',
+        features: [],
+        isPopular: false,
+        isActive: true,
+        displayOrder: 1,
+      });
+    }
+  }, [plan, isOpen]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
     try {
-      const featuresArray = features.filter(f => f.trim() !== '');
+      const url = plan 
+        ? `/api/products/${productId}/payment-plans/${plan.id}`
+        : `/api/products/${productId}/payment-plans`;
       
-      const data = {
-        name: formData.get('name') as string,
-        description: formData.get('description') as string || undefined,
-        planType: formData.get('planType') as PaymentPlan['planType'],
-        price: parseFloat(formData.get('price') as string),
-        currency: formData.get('currency') as PaymentPlan['currency'],
-        billingInterval: formData.get('billingInterval') as PaymentPlan['billingInterval'],
-        trialDays: formData.get('trialDays') ? parseInt(formData.get('trialDays') as string) : undefined,
-        features: featuresArray,
-        userLimit: formData.get('userLimit') ? parseInt(formData.get('userLimit') as string) : undefined,
-        storageLimit: formData.get('storageLimit') ? parseInt(formData.get('storageLimit') as string) : undefined,
-        apiCallsLimit: formData.get('apiCallsLimit') ? parseInt(formData.get('apiCallsLimit') as string) : undefined,
-        discountPercentage: formData.get('discountPercentage') ? parseFloat(formData.get('discountPercentage') as string) : undefined,
-        discountValidUntil: formData.get('discountValidUntil') as string || undefined,
-        isPopular: formData.get('isPopular') === 'on',
-        isActive: formData.get('isActive') === 'on',
-        displayOrder: parseInt(formData.get('displayOrder') as string) || (plan?.displayOrder || 1),
-      };
+      const method = plan ? 'PUT' : 'POST';
 
-      const result = plan 
-        ? await updatePaymentPlan(productId, plan.id, data)
-        : await createPaymentPlan(productId, data);
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
 
-      if (result.success) {
-        // Handle optimistic update if callback provided
-        if (onOptimisticUpdate && result.plan) {
-          const optimisticPlan: PaymentPlan = {
-            id: result.plan.id,
-            name: result.plan.name,
-            description: result.plan.description || undefined,
-            planType: result.plan.planType as PaymentPlan['planType'],
-            price: Number(result.plan.price),
-            currency: result.plan.currency as PaymentPlan['currency'],
-            billingInterval: result.plan.billingInterval as PaymentPlan['billingInterval'],
-            trialDays: result.plan.trialDays || undefined,
-            features: result.plan.features,
-            userLimit: result.plan.userLimit || undefined,
-            storageLimit: result.plan.storageLimit || undefined,
-            apiCallsLimit: result.plan.apiCallsLimit || undefined,
-            discountPercentage: result.plan.discountPercentage ? Number(result.plan.discountPercentage) : undefined,
-            discountValidUntil: result.plan.discountValidUntil?.toISOString(),
-            isPopular: result.plan.isPopular || false,
-            isActive: result.plan.isActive,
-            displayOrder: result.plan.displayOrder,
-          };
-          onOptimisticUpdate(optimisticPlan);
-        }
-        
+      if (response.ok) {
         toast({
           title: "Success",
           description: plan ? "Payment plan updated successfully" : "Payment plan created successfully",
         });
         onSaved();
       } else {
+        const error = await response.json();
         toast({
           title: "Error",
-          description: result.error || "Failed to save payment plan",
+          description: error.error || "Failed to save payment plan",
           variant: "destructive",
         });
       }
     } catch (error) {
-      console.error('Error saving plan:', error);
+      console.error('Error saving payment plan:', error);
       toast({
         title: "Error",
         description: "Failed to save payment plan",
         variant: "destructive",
       });
     } finally {
-      setIsPending(false);
+      setIsLoading(false);
     }
   };
 
-  // Initialize features when dialog opens
-  useEffect(() => {
-    if (isOpen) {
-      if (plan) {
-        setFeatures(plan.features.length > 0 ? plan.features : ['']);
-      } else {
-        setFeatures(['']);
-      }
-    }
-  }, [plan, isOpen]);
-
   const addFeature = () => {
-    setFeatures(prev => [...prev, '']);
+    setFormData(prev => ({
+      ...prev,
+      features: [...prev.features, '']
+    }));
   };
 
   const updateFeature = (index: number, value: string) => {
-    setFeatures(prev => prev.map((feature, i) => i === index ? value : feature));
+    setFormData(prev => ({
+      ...prev,
+      features: prev.features.map((feature, i) => i === index ? value : feature)
+    }));
   };
 
   const removeFeature = (index: number) => {
-    setFeatures(prev => prev.filter((_, i) => i !== index));
+    setFormData(prev => ({
+      ...prev,
+      features: prev.features.filter((_, i) => i !== index)
+    }));
   };
-
-  if (!isOpen) return null;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -148,22 +172,25 @@ export default function PaymentPlanDialog({
           </DialogTitle>
         </DialogHeader>
         
-        <form ref={formRef} action={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
           {/* Basic Information */}
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Label htmlFor="name">Plan Name *</Label>
               <Input
                 id="name"
-                name="name"
-                defaultValue={plan?.name || ''}
+                value={formData.name}
+                onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
                 placeholder="e.g., Pro Plan"
                 required
               />
             </div>
             <div>
               <Label htmlFor="planType">Plan Type</Label>
-              <Select name="planType" defaultValue={plan?.planType || 'RECURRING'}>
+              <Select
+                value={formData.planType}
+                onValueChange={(value) => setFormData(prev => ({ ...prev, planType: value as PaymentPlan['planType'] }))}
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -181,8 +208,8 @@ export default function PaymentPlanDialog({
             <Label htmlFor="description">Description</Label>
             <Textarea
               id="description"
-              name="description"
-              defaultValue={plan?.description || ''}
+              value={formData.description}
+              onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
               placeholder="Plan description..."
             />
           </div>
@@ -193,17 +220,20 @@ export default function PaymentPlanDialog({
               <Label htmlFor="price">Price *</Label>
               <Input
                 id="price"
-                name="price"
                 type="number"
                 step="0.01"
                 min="0"
-                defaultValue={plan?.price || 0}
+                value={formData.price}
+                onChange={(e) => setFormData(prev => ({ ...prev, price: parseFloat(e.target.value) || 0 }))}
                 required
               />
             </div>
             <div>
               <Label htmlFor="currency">Currency</Label>
-              <Select name="currency" defaultValue={plan?.currency || 'ILS'}>
+              <Select
+                value={formData.currency}
+                onValueChange={(value) => setFormData(prev => ({ ...prev, currency: value as PaymentPlan['currency'] }))}
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -211,7 +241,7 @@ export default function PaymentPlanDialog({
                   <SelectItem value="ILS">ILS</SelectItem>
                   <SelectItem value="EUR">EUR</SelectItem>
                   <SelectItem value="GBP">GBP</SelectItem>
-                  <SelectItem value="USD">USD</SelectItem>
+                  <SelectItem value="ILS">ILS</SelectItem>
                   <SelectItem value="CAD">CAD</SelectItem>
                   <SelectItem value="AUD">AUD</SelectItem>
                 </SelectContent>
@@ -219,7 +249,10 @@ export default function PaymentPlanDialog({
             </div>
             <div>
               <Label htmlFor="billingInterval">Billing Interval</Label>
-              <Select name="billingInterval" defaultValue={plan?.billingInterval || 'MONTHLY'}>
+              <Select
+                value={formData.billingInterval}
+                onValueChange={(value) => setFormData(prev => ({ ...prev, billingInterval: value as PaymentPlan['billingInterval'] }))}
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -240,10 +273,10 @@ export default function PaymentPlanDialog({
               <Label htmlFor="trialDays">Trial Days</Label>
               <Input
                 id="trialDays"
-                name="trialDays"
                 type="number"
                 min="0"
-                defaultValue={plan?.trialDays || ''}
+                value={formData.trialDays || ''}
+                onChange={(e) => setFormData(prev => ({ ...prev, trialDays: parseInt(e.target.value) || undefined }))}
                 placeholder="0"
               />
             </div>
@@ -251,50 +284,13 @@ export default function PaymentPlanDialog({
               <Label htmlFor="discountPercentage">Discount %</Label>
               <Input
                 id="discountPercentage"
-                name="discountPercentage"
                 type="number"
                 min="0"
                 max="100"
                 step="0.01"
-                defaultValue={plan?.discountPercentage || ''}
+                value={formData.discountPercentage || ''}
+                onChange={(e) => setFormData(prev => ({ ...prev, discountPercentage: parseFloat(e.target.value) || undefined }))}
                 placeholder="0"
-              />
-            </div>
-          </div>
-
-          {/* Limits */}
-          <div className="grid grid-cols-3 gap-4">
-            <div>
-              <Label htmlFor="userLimit">User Limit</Label>
-              <Input
-                id="userLimit"
-                name="userLimit"
-                type="number"
-                min="0"
-                defaultValue={plan?.userLimit || ''}
-                placeholder="Unlimited"
-              />
-            </div>
-            <div>
-              <Label htmlFor="storageLimit">Storage Limit (GB)</Label>
-              <Input
-                id="storageLimit"
-                name="storageLimit"
-                type="number"
-                min="0"
-                defaultValue={plan?.storageLimit || ''}
-                placeholder="Unlimited"
-              />
-            </div>
-            <div>
-              <Label htmlFor="apiCallsLimit">API Calls Limit</Label>
-              <Input
-                id="apiCallsLimit"
-                name="apiCallsLimit"
-                type="number"
-                min="0"
-                defaultValue={plan?.apiCallsLimit || ''}
-                placeholder="Unlimited"
               />
             </div>
           </div>
@@ -303,7 +299,7 @@ export default function PaymentPlanDialog({
           <div>
             <Label>Features</Label>
             <div className="space-y-2 mt-2">
-              {features.map((feature, index) => (
+              {formData.features.map((feature, index) => (
                 <div key={index} className="flex items-center gap-2">
                   <Input
                     value={feature}
@@ -315,7 +311,6 @@ export default function PaymentPlanDialog({
                     variant="outline"
                     size="sm"
                     onClick={() => removeFeature(index)}
-                    disabled={features.length === 1}
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
@@ -338,26 +333,20 @@ export default function PaymentPlanDialog({
             <div className="flex items-center space-x-2">
               <Checkbox
                 id="isActive"
-                name="isActive"
-                defaultChecked={plan?.isActive !== false}
+                checked={formData.isActive}
+                onCheckedChange={(checked) => setFormData(prev => ({ ...prev, isActive: checked as boolean }))}
               />
               <Label htmlFor="isActive">Active</Label>
             </div>
             <div className="flex items-center space-x-2">
               <Checkbox
                 id="isPopular"
-                name="isPopular"
-                defaultChecked={plan?.isPopular || false}
+                checked={formData.isPopular}
+                onCheckedChange={(checked) => setFormData(prev => ({ ...prev, isPopular: checked as boolean }))}
               />
               <Label htmlFor="isPopular">Mark as Popular</Label>
             </div>
           </div>
-
-          <input 
-            type="hidden" 
-            name="displayOrder" 
-            value={plan?.displayOrder || 1} 
-          />
 
           {/* Actions */}
           <div className="flex justify-end space-x-2 pt-4">
@@ -365,12 +354,12 @@ export default function PaymentPlanDialog({
               type="button"
               variant="outline"
               onClick={onClose}
-              disabled={isPending}
+              disabled={isLoading}
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={isPending}>
-              {isPending ? 'Saving...' : (plan ? 'Update' : 'Create')} Plan
+            <Button type="submit" disabled={isLoading}>
+              {isLoading ? 'Saving...' : (plan ? 'Update' : 'Create')} Plan
             </Button>
           </div>
         </form>

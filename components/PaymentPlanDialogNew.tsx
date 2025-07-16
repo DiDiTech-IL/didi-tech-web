@@ -19,7 +19,6 @@ interface PaymentPlanDialogProps {
   isOpen: boolean;
   onClose: () => void;
   onSaved: () => void;
-  onOptimisticUpdate?: (plan: PaymentPlan) => void;
 }
 
 export default function PaymentPlanDialog({ 
@@ -27,8 +26,7 @@ export default function PaymentPlanDialog({
   plan, 
   isOpen, 
   onClose, 
-  onSaved,
-  onOptimisticUpdate 
+  onSaved 
 }: PaymentPlanDialogProps) {
   const { toast } = useToast();
   const formRef = useRef<HTMLFormElement>(null);
@@ -66,30 +64,6 @@ export default function PaymentPlanDialog({
         : await createPaymentPlan(productId, data);
 
       if (result.success) {
-        // Handle optimistic update if callback provided
-        if (onOptimisticUpdate && result.plan) {
-          const optimisticPlan: PaymentPlan = {
-            id: result.plan.id,
-            name: result.plan.name,
-            description: result.plan.description || undefined,
-            planType: result.plan.planType as PaymentPlan['planType'],
-            price: Number(result.plan.price),
-            currency: result.plan.currency as PaymentPlan['currency'],
-            billingInterval: result.plan.billingInterval as PaymentPlan['billingInterval'],
-            trialDays: result.plan.trialDays || undefined,
-            features: result.plan.features,
-            userLimit: result.plan.userLimit || undefined,
-            storageLimit: result.plan.storageLimit || undefined,
-            apiCallsLimit: result.plan.apiCallsLimit || undefined,
-            discountPercentage: result.plan.discountPercentage ? Number(result.plan.discountPercentage) : undefined,
-            discountValidUntil: result.plan.discountValidUntil?.toISOString(),
-            isPopular: result.plan.isPopular || false,
-            isActive: result.plan.isActive,
-            displayOrder: result.plan.displayOrder,
-          };
-          onOptimisticUpdate(optimisticPlan);
-        }
-        
         toast({
           title: "Success",
           description: plan ? "Payment plan updated successfully" : "Payment plan created successfully",

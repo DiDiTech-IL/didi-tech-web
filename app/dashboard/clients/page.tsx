@@ -1,23 +1,23 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import {
-    Users,
-    Plus,
-    Search,
-    Filter,
-    Mail,
-    Phone,
-    Building,
-    Edit,
-    Trash2,
-    MoreHorizontal
-} from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
     Table,
     TableBody,
@@ -26,22 +26,22 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useTranslation } from "@/hooks/use-translation";
+import { motion } from "framer-motion";
+import {
+    Building,
+    Edit,
+    Filter,
+    Mail,
+    MoreHorizontal,
+    Phone,
+    Plus,
+    Search,
+    Trash2,
+    Users
+} from "lucide-react";
+import { useEffect, useState } from "react";
 
 
 interface Client {
@@ -169,7 +169,7 @@ export default function ClientsPage() {
     const stats = {
         total: clients.length,
         active: clients.filter(c => c.status === 'active').length,
-        totalRevenue: clients.reduce((sum, c) => sum + c.totalRevenue, 0),
+        totalRevenue: clients.reduce((sum, c) => sum + Number(c.totalRevenue), 0).toFixed(2),
     };
 
     return (
@@ -272,7 +272,7 @@ export default function ClientsPage() {
                             <div className="flex items-center justify-between">
                                 <div>
                                     <p className="text-sm font-medium text-slate-600 dark:text-slate-400">
-                                        {t('clients.totalClients')}
+                                       סך הלקוחות
                                     </p>
                                     <p className="text-2xl font-bold text-slate-900 dark:text-white">
                                         {stats.total}
@@ -294,14 +294,14 @@ export default function ClientsPage() {
                             <div className="flex items-center justify-between">
                                 <div>
                                     <p className="text-sm font-medium text-slate-600 dark:text-slate-400">
-                                        Active Clients
+                                        לקוחות פעילים
                                     </p>
                                     <p className="text-2xl font-bold text-slate-900 dark:text-white">
                                         {stats.active}
                                     </p>
                                 </div>
                                 <Badge className="h-8 px-3 bg-green-100 text-green-700">
-                                    Active
+                                    פעילים
                                 </Badge>
                             </div>
                         </CardContent>
@@ -318,14 +318,14 @@ export default function ClientsPage() {
                             <div className="flex items-center justify-between">
                                 <div>
                                     <p className="text-sm font-medium text-slate-600 dark:text-slate-400">
-                                        Total Revenue
+                                        רווח כולל
                                     </p>
                                     <p className="text-2xl font-bold text-slate-900 dark:text-white">
-                                        ${stats.totalRevenue.toLocaleString()}
+                                        ₪{stats.totalRevenue.toLocaleString()}
                                     </p>
                                 </div>
                                 <div className="h-8 w-8 bg-purple-100 rounded-full flex items-center justify-center">
-                                    <span className="text-sm font-bold text-purple-600">$</span>
+                                    <span className="text-sm font-bold text-purple-600">₪</span>
                                 </div>
                             </div>
                         </CardContent>
@@ -434,7 +434,7 @@ export default function ClientsPage() {
                                             </TableCell>
                                             <TableCell>
                                                 <span className="font-medium">
-                                                    ${client.totalRevenue && client.totalRevenue.toLocaleString()}
+                                                    ₪{client.totalRevenue && client.totalRevenue.toLocaleString()}
                                                 </span>
                                             </TableCell>
                                             <TableCell>

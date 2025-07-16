@@ -179,7 +179,7 @@ export default function ProductForm({ product, users, isOpen, onClose, onSubmit 
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+            <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>
                         {product ? 'ערוך מוצר' : 'צור מוצר חדש'}

@@ -458,7 +458,7 @@ export default function PaymentsPage() {
                                         Completed
                                     </p>
                                     <p className="text-2xl font-bold text-slate-900 dark:text-white">
-                                        ₪{stats.completed.toLocaleString()}
+                                        ₪{stats.completed}
                                     </p>
                                 </div>
                                 <CheckCircle className="h-8 w-8 text-green-600" />

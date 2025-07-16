@@ -46,6 +46,7 @@ interface PaymentPlan {
 interface ProductWithPlans {
     id: string;
     name: string;
+    nameEn: string;
     description: string;
     domain?: string;
     status: string;
@@ -118,7 +119,7 @@ export default function ProductsRevenueDashboard() {
     };
 
     const selectedProductData = products.find(p => p.id === selectedProduct);
-    const totalRevenue = products.reduce((sum, p) => sum + p.totalRevenue, 0);
+    const totalRevenue = products.reduce((sum: number, p) => sum + Number(p.totalRevenue), 0);
     const totalSubscriptions = products.reduce((sum, p) => sum + p.stats.totalSubscriptions, 0);
     const activeProducts = products.filter(p => p.status === 'LIVE').length;
 
@@ -386,7 +387,7 @@ export default function ProductsRevenueDashboard() {
                                     </TabsContent>
 
                                     <TabsContent value="plans">
-                                        <PaymentPlansManager productId={selectedProductData.id} />
+                                        <PaymentPlansManager productId={selectedProductData.id} nameEn={selectedProductData.name} />
                                     </TabsContent>
 
                                     <TabsContent value="coupons">

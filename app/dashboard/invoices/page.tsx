@@ -8,7 +8,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
-import { downloadInvoicePDF } from "@/lib/pdf-generator";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 
 interface Invoice {
@@ -36,7 +35,6 @@ export default function InvoicesPage() {
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState<Record<string, number>>({});
-  const [pdfLoading, setPdfLoading] = useState<string | null>(null);
   const [emailLoading, setEmailLoading] = useState<string | null>(null);
   const { toast } = useToast();
 
@@ -137,130 +135,14 @@ export default function InvoicesPage() {
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const downloadPDF = async (invoiceId: string, invoiceNumber: string) => {
-    setPdfLoading(invoiceId);
-    
-    try {
-      toast({
-        title: "מכין חשבונית",
-        description: "יוצר קובץ PDF...",
-      });
-
-      // First try server-side PDF generation
-      const response = await fetch(`/api/invoices/${invoiceId}/pdf?format=pdf`);
-      
-      if (!response.ok) {
-        throw new Error('Server PDF generation failed');
-      }
-
-      // Create blob from response
-      const blob = await response.blob();
-      
-      // Create download link
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `invoice-${invoiceNumber}.pdf`;
-      document.body.appendChild(a);
-      a.click();
-      
-      // Cleanup
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-      
-      toast({
-        title: "הצלחה",
-        description: "חשבונית הורדה בהצלחה",
-      });
-    } catch (error) {
-      console.error('Server PDF generation failed, trying client-side fallback:', error);
-      
-      try {
-        toast({
-          title: "מנסה דרך חלופית",
-          description: "יוצר PDF במצב חלופי...",
-        });
-
-        // Fallback to client-side PDF generation with transformed data
-        const invoiceResponse = await fetch(`/api/invoices/${invoiceId}?transform=pdf`);
-        if (!invoiceResponse.ok) {
-          throw new Error('Failed to fetch invoice data');
-        }
-        
-        const invoiceData = await invoiceResponse.json();
-        
-        // Ensure all required fields are present and properly typed
-        const transformedData = {
-          ...invoiceData,
-          createdAt: invoiceData.createdAt || new Date().toISOString(),
-          issueDate: invoiceData.issueDate || invoiceData.createdAt || new Date().toISOString(),
-          currency: invoiceData.currency || 'USD',
-          client: {
-            ...invoiceData.client,
-            id: invoiceData.client.id || invoiceId,
-          },
-        };
-        
-        downloadInvoicePDF(transformedData, `invoice-${invoiceNumber}.pdf`);
-        
-        toast({
-          title: "הצלחה",
-          description: "חשבונית הורדה בהצלחה (מצב חלופי)",
-        });
-      } catch (fallbackError) {
-        console.error('Client-side PDF generation also failed:', fallbackError);
-        
-        // Last resort: Try the alternative canvas-based approach
-        try {
-          toast({
-            title: "מנסה דרך אחרונה",
-            description: "יוצר PDF במצב Canvas...",
-          });
-
-          const { generateInvoicePDFCanvas } = await import('@/lib/pdf-generator');
-          const invoiceResponse = await fetch(`/api/invoices/${invoiceId}?transform=pdf`);
-          if (!invoiceResponse.ok) {
-            throw new Error('Failed to fetch invoice data');
-          }
-          
-          const invoiceData = await invoiceResponse.json();
-          const transformedData = {
-            ...invoiceData,
-            createdAt: invoiceData.createdAt || new Date().toISOString(),
-            issueDate: invoiceData.issueDate || invoiceData.createdAt || new Date().toISOString(),
-            currency: invoiceData.currency || 'USD',
-            client: {
-              ...invoiceData.client,
-              id: invoiceData.client.id || invoiceId,
-            },
-          };
-          
-          const blob = await generateInvoicePDFCanvas(transformedData);
-          const url = window.URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = `invoice-${invoiceNumber}.pdf`;
-          document.body.appendChild(a);
-          a.click();
-          window.URL.revokeObjectURL(url);
-          document.body.removeChild(a);
-          
-          toast({
-            title: "הצלחה",
-            description: "חשבונית הורדה בהצלחה (מצב חלופי מתקדם)",
-          });
-        } catch (canvasError) {
-          console.error('Canvas-based PDF generation also failed:', canvasError);
-          toast({
-            title: "שגיאה",
-            description: "הורדת החשבונית נכשלה. אנא נסה שוב מאוחר יותר.",
-            variant: "destructive",
-          });
-        }
-      }
-    } finally {
-      setPdfLoading(null);
-    }
+    toast({
+      title: "שירות PDF אינו זמין",
+      description: "שירות יצירת קבצי PDF אינו פעיל במערכת כרגע. לקבלת עזרה או לחלופות אחרות, אנא צור קשר עם התמיכה הטכנית.",
+      variant: "destructive",
+      duration: 6000, // Show for 6 seconds
+    });
   };
 
   const sendInvoiceEmail = async (invoiceId: string, invoiceNumber: string, language: 'he' | 'en' = 'he') => {
@@ -513,16 +395,10 @@ export default function InvoicesPage() {
                         <Button 
                           variant="ghost" 
                           size="sm" 
-                          title={pdfLoading === invoice.id ? "יוצר PDF..." : "Download PDF"}
+                          title="Download PDF"
                           onClick={() => downloadPDF(invoice.id, invoice.invoiceNumber)}
-                          disabled={pdfLoading === invoice.id}
-                          className={pdfLoading === invoice.id ? "opacity-60" : ""}
                         >
-                          {pdfLoading === invoice.id ? (
-                            <LoadingSpinner className="h-4 w-4" />
-                          ) : (
-                            <Download className="h-4 w-4" />
-                          )}
+                          <Download className="h-4 w-4" />
                         </Button>
                         {invoice.status === 'DRAFT' && (
                           <Button 

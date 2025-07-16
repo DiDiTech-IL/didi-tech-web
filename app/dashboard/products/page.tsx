@@ -6,11 +6,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { motion } from "framer-motion";
-import { Database, DollarSign, Edit, Globe, Key, Play, Plus, Receipt, Trash2, Users, Webhook } from "lucide-react";
+import { CreditCard, Database, DollarSign, Edit, Gift, Globe, Key, Play, Plus, Receipt, Settings, Trash2, Users, Webhook } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import PaymentPlansManager from "@/components/PaymentPlansManager";
+import ProductCouponManager from "@/components/ProductCouponManager";
 import ProductForm from "@/components/ProductForm";
+import ProductPaymentPlansManager from "@/components/ProductPaymentPlansManager";
+import ProductWebhookManager from "@/components/ProductWebhookManager";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from "@/hooks/use-translation";
 
@@ -35,7 +39,7 @@ interface ProductFormData {
 interface Product {
     id: string;
     name: string;
-    nameEn?: string;
+    nameEn: string;
     description: string;
     status: string;
     domain?: string;
@@ -94,6 +98,13 @@ export default function ProductsPage() {
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [selectedTab, setSelectedTab] = useState("overview");
+
+    // New modal states for integrated management
+    const [isPaymentPlansModalOpen, setIsPaymentPlansModalOpen] = useState(false);
+    const [isCouponsModalOpen, setIsCouponsModalOpen] = useState(false);
+    const [isWebhookModalOpen, setIsWebhookModalOpen] = useState(false);
+    const [selectedProductForModal, setSelectedProductForModal] = useState<Product | null>(null);
+
     const { toast } = useToast();
     const { t } = useTranslation();
 
@@ -404,6 +415,24 @@ export default function ProductsPage() {
         setIsFormOpen(false);
     };
 
+    // New modal handlers
+    const openPaymentPlansModal = (product: Product) => {
+        setSelectedProductForModal(product);
+        setIsPaymentPlansModalOpen(true);
+    };
+
+    const openCouponsModal = (product: Product) => {
+        setSelectedProductForModal(product);
+        setIsCouponsModalOpen(true);
+    };
+
+    const openWebhookModal = (product: Product) => {
+        setSelectedProductForModal(product);
+        setIsWebhookModalOpen(true);
+    };
+
+   
+
     const createPaymentPlan = () => {
         // This will be handled by the PaymentPlansManager component
         // We could navigate to a specific product or focus on the payment plans tab
@@ -544,7 +573,7 @@ export default function ProductsPage() {
                                 <TabsTrigger value="payment-plans">תוכניות תשלום</TabsTrigger>
                                 <TabsTrigger value="webhooks">{t('products.webhooks')}</TabsTrigger>
                             </TabsList>
-                            
+
                             <TabsContent value="overview">
                                 <Table>
                                     <TableHeader>
@@ -645,6 +674,33 @@ export default function ProductsPage() {
                                                         <Button
                                                             variant="ghost"
                                                             size="sm"
+                                                            onClick={() => openPaymentPlansModal(product)}
+                                                            title="Manage Payment Plans"
+                                                            className="text-blue-600"
+                                                        >
+                                                            <CreditCard className="h-4 w-4" />
+                                                        </Button>
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="sm"
+                                                            onClick={() => openCouponsModal(product)}
+                                                            title="Manage Coupons"
+                                                            className="text-purple-600"
+                                                        >
+                                                            <Gift className="h-4 w-4" />
+                                                        </Button>
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="sm"
+                                                            onClick={() => openWebhookModal(product)}
+                                                            title="Manage Webhooks & Client Admin"
+                                                            className="text-orange-600"
+                                                        >
+                                                            <Settings className="h-4 w-4" />
+                                                        </Button>
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="sm"
                                                             onClick={() => generateInvoice(product.id)}
                                                             title={t('products.generateInvoice')}
                                                             className="text-emerald-600"
@@ -661,15 +717,6 @@ export default function ProductsPage() {
                                                                 <Key className="h-4 w-4" />
                                                             </Button>
                                                         )}
-                                                        <Button
-                                                            variant="ghost"
-                                                            size="sm"
-                                                            onClick={() => window.open(`/api/public/payment-plans/${product.id}`, '_blank')}
-                                                            title="תצוגה מקדימה של API תוכניות תשלום"
-                                                            className="text-blue-600"
-                                                        >
-                                                            <DollarSign className="h-4 w-4" />
-                                                        </Button>
                                                         {product.dbConnectionString && (
                                                             <Button
                                                                 variant="ghost"
@@ -696,7 +743,7 @@ export default function ProductsPage() {
                                     </TableBody>
                                 </Table>
                             </TabsContent>
-                            
+
                             <TabsContent value="subscriptions">
                                 <div className="space-y-4">
                                     {products.map((product) => (
@@ -744,7 +791,7 @@ export default function ProductsPage() {
                                                                         ${subscription.amount.toLocaleString()} {subscription.currency}
                                                                     </TableCell>
                                                                     <TableCell>
-                                                                        {subscription.nextBilling 
+                                                                        {subscription.nextBilling
                                                                             ? new Date(subscription.nextBilling).toLocaleDateString()
                                                                             : 'One-time'
                                                                         }
@@ -759,7 +806,7 @@ export default function ProductsPage() {
                                     ))}
                                 </div>
                             </TabsContent>
-                            
+
                             <TabsContent value="payment-plans">
                                 <div className="space-y-4">
                                     {products.map((product) => (
@@ -783,13 +830,13 @@ export default function ProductsPage() {
                                                 </CardTitle>
                                             </CardHeader>
                                             <CardContent>
-                                                <PaymentPlansManager productId={product.id} />
+                                                <PaymentPlansManager productId={product.id} nameEn={product.nameEn} />
                                             </CardContent>
                                         </Card>
                                     ))}
                                 </div>
                             </TabsContent>
-                            
+
                             <TabsContent value="webhooks">
                                 <div className="space-y-4">
                                     {products.map((product) => (
@@ -866,6 +913,70 @@ export default function ProductsPage() {
                 onClose={closeForm}
                 onSubmit={selectedProduct ? handleEditProduct : handleCreateProduct}
             />
+
+            {/* Payment Plans Modal */}
+            <Dialog open={isPaymentPlansModalOpen} onOpenChange={setIsPaymentPlansModalOpen}>
+                <DialogContent className="w-[95vw] max-w-6xl h-[95vh] max-h-[95vh] overflow-y-auto p-0">
+                    <div className="p-4 sm:p-6">
+                        <DialogHeader>
+                            <DialogTitle className="text-lg sm:text-xl">
+                                Payment Plans - {selectedProductForModal?.name}
+                            </DialogTitle>
+                        </DialogHeader>
+                        <div className="mt-4">
+                            {selectedProductForModal && (
+                                <ProductPaymentPlansManager
+                                    productId={selectedProductForModal.id}
+                                    productName={selectedProductForModal.name}
+                                    nameEn={selectedProductForModal.nameEn || ''}
+                                />
+                            )}
+                        </div>
+                    </div>
+                </DialogContent>
+            </Dialog>
+
+            {/* Coupons Modal */}
+            <Dialog open={isCouponsModalOpen} onOpenChange={setIsCouponsModalOpen}>
+                <DialogContent className="w-[95vw] max-w-5xl h-[95vh] max-h-[95vh] overflow-y-auto p-0">
+                    <div className="p-4 sm:p-6">
+                        <DialogHeader>
+                            <DialogTitle className="text-lg sm:text-xl">
+                                Coupons - {selectedProductForModal?.name}
+                            </DialogTitle>
+                        </DialogHeader>
+                        <div className="mt-4">
+                            {selectedProductForModal && (
+                                <ProductCouponManager
+                                    productId={selectedProductForModal.id}
+                                    productName={selectedProductForModal.name}
+                                />
+                            )}
+                        </div>
+                    </div>
+                </DialogContent>
+            </Dialog>
+
+            {/* Webhooks & Client Admin Modal */}
+            <Dialog open={isWebhookModalOpen} onOpenChange={setIsWebhookModalOpen}>
+                <DialogContent className="w-[95vw] max-w-4xl h-[95vh] max-h-[95vh] overflow-y-auto p-0">
+                    <div className="p-4 sm:p-6">
+                        <DialogHeader>
+                            <DialogTitle className="text-lg sm:text-xl">
+                                Webhooks & Client Management - {selectedProductForModal?.name}
+                            </DialogTitle>
+                        </DialogHeader>
+                        <div className="mt-4">
+                            {selectedProductForModal && (
+                                <ProductWebhookManager
+                                    productId={selectedProductForModal.id}
+                                    productName={selectedProductForModal.name}
+                                />
+                            )}
+                        </div>
+                    </div>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }

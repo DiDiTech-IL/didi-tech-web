@@ -45,30 +45,8 @@ export default function InvoicePage({ data }: InvoicePageProps) {
   };
 
   const handleDownloadPDF = async () => {
-    try {
-      const response = await fetch(`/api/invoices/${data.invoice.id}/pdf?format=pdf`);
-      
-      if (!response.ok) {
-        throw new Error('Failed to generate PDF');
-      }
-
-      // Create blob from response
-      const blob = await response.blob();
-      
-      // Create download link
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `invoice-${data.invoice.number}.pdf`;
-      document.body.appendChild(a);
-      a.click();
-      
-      // Cleanup
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-    } catch (error) {
-      console.error('Error downloading PDF:', error);
-      // Fallback to print if PDF generation fails
+    // Show a modern popup instead of basic alert
+    if (window.confirm("שירות PDF אינו פעיל כרגע.\n\nשירות יצירת קבצי PDF אינו זמין במערכת. אנא צור קשר עם התמיכה הטכנית לקבלת עזרה.\n\nהאם תרצה להדפיס את החשבונית במקום?")) {
       window.print();
     }
   };

@@ -9,13 +9,15 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
+    const url = new URL(request.url);
+    const includeInactive = url.searchParams.get('includeInactive') === 'true';
     
     // Get product with payment plans
     const product = await prisma.product.findUnique({
       where: { id },
       include: {
         paymentPlans: {
-          where: { isActive: true },
+          where: includeInactive ? {} : { isActive: true },
           orderBy: { displayOrder: 'asc' }
         },
         subscriptions: {

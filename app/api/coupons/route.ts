@@ -3,14 +3,26 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { prisma } from '@/lib/prisma';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     const { userId } = await auth();
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const { searchParams } = new URL(request.url);
+    const productId = searchParams.get('productId');
+
+    const whereClause = productId 
+      ? {
+          productIds: {
+            has: productId
+          }
+        }
+      : {};
+
     const coupons = await prisma.coupon.findMany({
+      where: whereClause,
       orderBy: { createdAt: 'desc' },
       include: {
         redemptions: {

@@ -49,7 +49,9 @@ export default function PaymentPlansLoading() {
                   <Skeleton className="h-5 w-16" />
                   <Skeleton className="h-5 w-12" />
                 </div>
-                <Skeleton className="h-6 w-16" />
+                <div className="space-y-1">
+                  <Skeleton className="h-5 w-12" />
+                </div>
                 <div className="flex gap-1">
                   <Skeleton className="h-8 w-8" />
                   <Skeleton className="h-8 w-8" />
