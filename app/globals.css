@@ -6,6 +6,18 @@ html[dir="rtl"] {
   direction: rtl;
 }
 
+/* Smooth in-page scrolling (anchors) */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 6rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
 html[dir="rtl"] .mr-2 {
   margin-right: 0;
   margin-left: 0.5rem;

@@ -9,7 +9,7 @@ const rubikFont = Rubik({ variable: "--font-rubik", weight: ['300', '400', '500'
 const sourceCodeFont = Source_Code_Pro({ variable: "--font-code-mono", weight: '400', subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'תכלס.Dev - פיתוח אפליקציות מעשי',
+  title: 'תכלס.Dev - פיתוח טכנולוגי בול בשבילך',
   description: 'חברת פיתוח אפליקציות ישראלית המתמחה בפתרונות מעשיים לעסקים. אפליקציות אינטרנט, מובייל ומערכות צד שרת.',
 }
 
@@ -22,7 +22,6 @@ export default function RootLayout({
     
       <html lang="he">
         <body dir="rtl" className={`${inter.className} ${heeboFont.variable} ${assistantFont.variable} ${rubikFont.variable} ${sourceCodeFont.variable} antialiased`}>
-        
           {children}
         </body>
       </html>
