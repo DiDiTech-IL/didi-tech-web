@@ -1,50 +1,69 @@
-# React + TypeScript + Vite
+# Clean Next.js Base Project
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A clean Next.js project with a simple homepage, ready for building new features.
 
-Currently, two official plugins are available:
+## Getting Started
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Install dependencies:
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+```bash
+npm install
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+Run the development server:
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+```bash
+npm run dev
 ```
+
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the homepage.
+
+## Project Structure
+
+```
+app/
+  ├── page.tsx          # Homepage entry point
+  ├── layout.tsx        # Root layout with fonts
+  └── globals.css       # Global styles
+
+components/
+  ├── ProfessionalHomepage.tsx  # Main homepage component
+  ├── ProjectsShowcase.tsx      # Projects showcase section
+  ├── ProjectCard.tsx           # Individual project card
+  ├── ProjectDialog.tsx         # Project detail dialog
+  ├── RTLWrapper.tsx            # RTL language support wrapper
+  └── ui/                       # shadcn/ui components
+
+lib/
+  ├── utils.ts          # Utility functions
+  ├── icons.ts          # Icon definitions
+  └── translations.ts   # Translation utilities
+
+hooks/
+  └── use-translation.ts  # Translation hook
+```
+
+## Tech Stack
+
+- **Next.js 15** - React framework
+- **TypeScript** - Type safety
+- **Tailwind CSS** - Styling
+- **shadcn/ui** - UI components
+- **Framer Motion** - Animations
+- **Lucide React** - Icons
+
+## Building New Features
+
+This is a clean base with minimal dependencies. You can start building by:
+
+1. Adding new pages in the `app/` directory
+2. Creating reusable components in `components/`
+3. Adding utility functions in `lib/`
+4. Installing additional packages as needed
+
+## Available Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint
